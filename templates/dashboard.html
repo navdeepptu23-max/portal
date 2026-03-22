@@ -1,0 +1,39 @@
+{% extends "dashboard_base.html" %}
+
+{% block dashboard_title %}Dashboard - Web Portal{% endblock %}
+
+{% block dashboard_content %}
+<div class="container">
+    <div class="card">
+        <h2>👋 Welcome, {{ user.username }}!</h2>
+        <p style="color: #666; margin-bottom: 20px;">This is your personal dashboard. You can manage your profile and account settings from here.</p>
+        
+        <div class="user-info">
+            <div class="info-block">
+                <label>Username</label>
+                <p>{{ user.username }}</p>
+            </div>
+            <div class="info-block">
+                <label>Email</label>
+                <p>{{ user.email }}</p>
+            </div>
+            <div class="info-block">
+                <label>Full Name</label>
+                <p>{{ user.full_name if user.full_name else 'Not set' }}</p>
+            </div>
+            <div class="info-block">
+                <label>Member Since</label>
+                <p>{{ user.created_at.strftime('%B %d, %Y') }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>⚙️ Account Management</h2>
+        <div class="links">
+            <a href="{{ url_for('profile') }}">✏️ Edit Profile</a>
+            <a href="{{ url_for('change_password') }}">🔑 Change Password</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

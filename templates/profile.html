@@ -1,0 +1,69 @@
+{% extends "dashboard_base.html" %}
+
+{% block dashboard_title %}Profile - Web Portal{% endblock %}
+
+{% block dashboard_content %}
+<div class="container">
+    <div class="card">
+        <h2>👤 My Profile</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" value="{{ user.username }}" disabled style="background: #f0f0f0; cursor: not-allowed;">
+                <small style="color: #666;">Username cannot be changed</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" value="{{ user.full_name if user.full_name else '' }}" placeholder="Enter your full name">
+            </div>
+            
+            <button type="submit" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: 600; cursor: pointer;">Save Changes</button>
+        </form>
+    </div>
+    
+    <div class="card">
+        <h2>🔐 Security</h2>
+        <a href="{{ url_for('change_password') }}" style="display: inline-block; padding: 12px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 5px; font-weight: 600;">Change Password</a>
+    </div>
+    
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</div>
+{% endblock %}

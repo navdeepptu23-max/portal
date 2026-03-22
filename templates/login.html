@@ -1,0 +1,39 @@
+from flask import Flask, render_template, request, redirect
+
+app = Flask(__name__)
+
+# Login Page
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # Simple login check
+        if username == "admin" and password == "1234":
+            return "✅ Login Successful!"
+        else:
+            return "❌ Invalid Username or Password"
+
+    return render_template('login.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body style="text-align:center; margin-top:100px; font-family:Arial;">
+
+<h2>Login Portal</h2>
+
+<form method="POST">
+    <input type="text" name="username" placeholder="Enter Username" required><br><br>
+    <input type="password" name="password" placeholder="Enter Password" required><br><br>
+    <button type="submit">Login</button>
+</form>
+
+</body>
+</html>pip install flask
+

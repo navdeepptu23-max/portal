@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Post Header -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h1 class="display-5 mb-4">{{ post.title }}</h1>
+                    
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ post.author.get_avatar() }}" alt="{{ post.author.username }}" class="avatar me-3">
+                            <div>
+                                <p class="mb-0"><strong>{{ post.author.full_name or post.author.username }}</strong></p>
+                                <small class="text-muted">@{{ post.author.username }}</small>
+                                <br>
+                                <small class="text-muted">{{ post.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                            </div>
+                        </div>
+                        {% if current_user and current_user.id == post.user_id %}
+                        <div>
+                            <a href="/post/{{ post.id }}/edit" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger" onclick="if(confirm('Delete this post?')) { document.getElementById('delete-form').submit(); }">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <form id="delete-form" action="/post/{{ post.id }}/delete" method="POST" style="display:none;"></form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Stats -->
+                    <div class="mb-3">
+                        <span class="badge bg-info me-2"><i class="fas fa-eye"></i> {{ post.views }} views</span>
+                        <span class="badge bg-danger"><i class="fas fa-heart"></i> {{ post.likes }} likes</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Post Content -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="post-content" style="line-height: 1.8; font-size: 1.1rem;">
+                        {{ post.content }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Like & Share -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex gap-2">
+                        {% if current_user %}
+                        <button class="btn btn-outline-danger like-btn" data-post-id="{{ post.id }}">
+                            <i class="fas fa-heart"></i> Like ({{ post.likes }})
+                        </button>
+                        {% else %}
+                        <a href="/login" class="btn btn-outline-danger">
+                            <i class="fas fa-heart"></i> Like to Support
+                        </a>
+                        {% endif %}
+                        <a href="/profile/{{ post.author.username }}" class="btn btn-outline-primary">
+                            <i class="fas fa-user"></i> Visit Author Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Author Card -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">About the Author</h5>
+                    <div class="d-flex align-items-center">
+                        <img src="{{ post.author.get_avatar() }}" alt="{{ post.author.username }}" class="avatar-lg me-3">
+                        <div>
+                            <p class="mb-1"><strong><a href="/profile/{{ post.author.username }}" class="text-decoration-none">{{ post.author.full_name or post.author.username }}</a></strong></p>
+                            <p class="text-muted mb-0">{{ post.author.bio or 'No bio available' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelector('.like-btn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const response = await fetch(`/post/{{ post.id }}/like`, { method: 'POST' });
+    const data = await response.json();
+    if (data.success) {
+        document.querySelector('.like-btn').innerHTML = `<i class="fas fa-heart"></i> Like (${data.likes})`;
+    }
+});
+</script>
+{% endblock %}
