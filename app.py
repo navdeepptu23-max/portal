@@ -383,18 +383,21 @@ def inject_user():
 # ==================== INITIALIZATION ====================
 
 def init_db():
-    with app.app_context():
-        db.create_all()
-        print("Database initialized!")
-
-
-# Initialize database when app starts (works with Gunicorn too)
-with app.app_context():
+    """Initialize database tables"""
     try:
         db.create_all()
         print("✓ Database initialized successfully")
     except Exception as e:
-        print(f"✗ Database initialization error: {e}")
+        print(f"⚠ Database initialization warning: {e}")
+
+
+# Initialize database when app starts (works with Gunicorn too)
+try:
+    with app.app_context():
+        init_db()
+except Exception as e:
+    print(f"⚠ App startup initialization: {e}")
+
 
 if __name__ == '__main__':
     app.run(debug=False)
