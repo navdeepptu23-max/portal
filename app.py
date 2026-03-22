@@ -12,7 +12,20 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///portal.db')
+
+# Database configuration - handle Render ephemeral storage
+database_url = os.getenv('DATABASE_URL')
+if database_url:
+    # Using external database (PostgreSQL, etc)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Use SQLite with persistent path
+    import tempfile
+    # On Render, use /tmp but it persists during service lifetime
+    # For local development, use portal.db
+    db_path = os.path.join(os.path.dirname(__file__), 'portal.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -239,14 +252,23 @@ def register():
             flash('Email already registered', 'danger')
             return redirect(url_for('register'))
         
-        # Create user
-        user = User(username=username, email=email, full_name=full_name)
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-        
-        flash('Registration successful! Please login.', 'success')
-        return redirect(url_for('login'))
+        try:
+            # Create user
+            user = User(username=username, email=email, full_name=full_name)
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+            
+            print(f"[REGISTER] ✓ User created: {username}")
+            print(f"[REGISTER] Total users now: {User.query.count()}")
+            
+            flash('Registration successful! Please login.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            print(f"[REGISTER ERROR] {str(e)}")
+            db.session.rollback()
+            flash(f'Registration error: {str(e)}', 'danger')
+            return redirect(url_for('register'))
     
     return render_template('register.html', user=get_current_user())
 
@@ -254,18 +276,32 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username', '')
+        username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
         
-        user = User.query.filter_by(username=username).first()
+        print(f"[LOGIN] Attempting login for username: {username}")
         
-        if user and user.check_password(password):
-            session['user_id'] = user.id
-            session.permanent = True
-            flash(f'Welcome back, {user.username}!', 'success')
-            return redirect(url_for('dashboard'))
-        else:
+        try:
+            user = User.query.filter_by(username=username).first()
+            
+            if user:
+                print(f"[LOGIN] User found: {username}")
+                if user.check_password(password):
+                    print(f"[LOGIN] Password correct for {username}")
+                    session['user_id'] = user.id
+                    session.permanent = True
+                    flash(f'Welcome back, {user.username}!', 'success')
+                    return redirect(url_for('dashboard'))
+                else:
+                    print(f"[LOGIN] Password INCORRECT for {username}")
+            else:
+                print(f"[LOGIN] User NOT found: {username}")
+                print(f"[LOGIN] Total users in database: {User.query.count()}")
+            
             flash('Invalid username or password', 'danger')
+        except Exception as e:
+            print(f"[LOGIN ERROR] {str(e)}")
+            flash(f'Login error: {str(e)}', 'danger')
     
     return render_template('login.html', user=get_current_user())
 
