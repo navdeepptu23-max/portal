@@ -15,6 +15,10 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///portal.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_recycle': 280,
+    'pool_pre_ping': True,
+}
 
 db = SQLAlchemy(app)
 
@@ -384,6 +388,13 @@ def init_db():
         print("Database initialized!")
 
 
+# Initialize database when app starts (works with Gunicorn too)
+with app.app_context():
+    try:
+        db.create_all()
+        print("✓ Database initialized successfully")
+    except Exception as e:
+        print(f"✗ Database initialization error: {e}")
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=False)
