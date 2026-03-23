@@ -189,15 +189,23 @@ def admin_required(f):
 
 def get_current_user():
     if 'user_id' in session:
-        return User.query.get(session['user_id'])
+        try:
+            return User.query.get(session['user_id'])
+        except Exception as e:
+            print(f"[USER LOOKUP ERROR] {e}")
+            return None
     return None
 
 
 def get_current_admin():
     if 'admin_id' in session:
-        admin = User.query.get(session['admin_id'])
-        if admin and admin.is_admin:
-            return admin
+        try:
+            admin = User.query.get(session['admin_id'])
+            if admin and admin.is_admin:
+                return admin
+        except Exception as e:
+            print(f"[ADMIN LOOKUP ERROR] {e}")
+            return None
     return None
 
 
@@ -259,7 +267,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             
-            print(f"[REGISTER] ✓ User created: {username}")
+            print(f"[REGISTER] [OK] User created: {username}")
             print(f"[REGISTER] Total users now: {User.query.count()}")
             
             flash('Registration successful! Please login.', 'success')
@@ -296,12 +304,17 @@ def login():
                     print(f"[LOGIN] Password INCORRECT for {username}")
             else:
                 print(f"[LOGIN] User NOT found: {username}")
-                print(f"[LOGIN] Total users in database: {User.query.count()}")
+                try:
+                    print(f"[LOGIN] Total users in database: {User.query.count()}")
+                except Exception as count_err:
+                    print(f"[LOGIN] Could not count users: {count_err}")
             
             flash('Invalid username or password', 'danger')
         except Exception as e:
             print(f"[LOGIN ERROR] {str(e)}")
-            flash(f'Login error: {str(e)}', 'danger')
+            import traceback
+            traceback.print_exc()
+            flash('Login error. Please try again.', 'danger')
     
     return render_template('login.html', user=get_current_user())
 
@@ -660,15 +673,21 @@ def not_found(error):
 
 @app.errorhandler(500)
 def server_error(error):
-    user = get_current_user()
-    return render_template('500.html', user=user), 500
+    try:
+        user = get_current_user()
+        return render_template('500.html', user=user), 500
+    except Exception:
+        return "500 Server Error: Something went wrong on our end.", 500
 
 
 # ==================== CONTEXT PROCESSORS ====================
 
 @app.context_processor
 def inject_user():
-    return {'current_user': get_current_user()}
+    try:
+        return {'current_user': get_current_user()}
+    except Exception:
+        return {'current_user': None}
 
 
 # ==================== INITIALIZATION ====================
