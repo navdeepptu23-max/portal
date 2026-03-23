@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Import Login IDs | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Import Login IDs from CSV</h2>
+  <p>Required columns: username, email, password. Optional column: is_admin.</p>
+  <div class="cta-row">
+    <a class="btn ghost" href="{{ url_for('admin_users_import_template') }}">Download CSV Template</a>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="form-grid">
+    <label>CSV File
+      <input type="file" name="csv_file" accept=".csv,text/csv" required />
+    </label>
+
+    <div class="cta-row">
+      <button class="btn primary" type="submit">Import Users</button>
+      <a class="btn ghost" href="{{ url_for('admin_users') }}">Back to Users</a>
+    </div>
+  </form>
+
+  <h3 class="section-title">CSV Example</h3>
+  <pre>username,email,password,is_admin
+staff1,staff1@example.com,StrongPass123,false
+manager1,manager1@example.com,StrongPass123,true</pre>
+</section>
+{% endblock %}

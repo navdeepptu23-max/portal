@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Admin Report View | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Admin Report View</h2>
+  <div class="cta-row">
+    <a class="btn primary" href="{{ url_for('admin_report_edit', report_id=report.id) }}">Edit Report</a>
+    <form class="inline-form" method="post" action="{{ url_for('admin_report_delete', report_id=report.id) }}" onsubmit="return confirm('Delete this report?');">
+      <button class="btn danger" type="submit">Delete Report</button>
+    </form>
+  </div>
+  <p><strong>Hospital:</strong> {{ report.hospital_name }}</p>
+  <p><strong>District:</strong> {{ report.district }}</p>
+  <p><strong>Month:</strong> {{ report.month_year }}</p>
+  <p><strong>Submitted By:</strong> {{ report.owner.username }} ({{ report.owner.email }})</p>
+
+  <div class="stats">
+    <article>
+      <h3>Outpatients</h3>
+      <p>{{ report.outpatients }}</p>
+    </article>
+    <article>
+      <h3>Admissions</h3>
+      <p>{{ report.admissions }}</p>
+    </article>
+    <article>
+      <h3>Deliveries</h3>
+      <p>{{ report.deliveries }}</p>
+    </article>
+    <article>
+      <h3>Deaths</h3>
+      <p>{{ report.deaths }}</p>
+    </article>
+  </div>
+
+  {% if report.notes %}
+    <h3 class="section-title">Notes</h3>
+    <p>{{ report.notes }}</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Edit Report | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Edit Hospital Report</h2>
+  <p>Updating report #{{ report.id }} submitted by {{ report.owner.username }}.</p>
+
+  <form method="post" class="form-grid">
+    <label>Hospital Name
+      <input type="text" name="hospital_name" value="{{ report.hospital_name }}" required />
+    </label>
+    <label>District
+      <input type="text" name="district" value="{{ report.district }}" required />
+    </label>
+    <label>Month / Year
+      <input type="text" name="month_year" value="{{ report.month_year }}" required />
+    </label>
+
+    <div class="stats">
+      <label>Outpatients
+        <input type="number" min="0" name="outpatients" value="{{ report.outpatients }}" />
+      </label>
+      <label>Admissions
+        <input type="number" min="0" name="admissions" value="{{ report.admissions }}" />
+      </label>
+      <label>Deliveries
+        <input type="number" min="0" name="deliveries" value="{{ report.deliveries }}" />
+      </label>
+      <label>Deaths
+        <input type="number" min="0" name="deaths" value="{{ report.deaths }}" />
+      </label>
+    </div>
+
+    <label>Notes
+      <textarea name="notes" rows="4">{{ report.notes }}</textarea>
+    </label>
+
+    <div class="cta-row">
+      <button class="btn primary" type="submit">Save Changes</button>
+      <a class="btn ghost" href="{{ url_for('admin_report_view', report_id=report.id) }}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

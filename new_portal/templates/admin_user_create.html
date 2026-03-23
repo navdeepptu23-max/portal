@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Create Login ID | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Create Login ID</h2>
+  <p>Create a new portal account from admin panel.</p>
+
+  <form method="post" class="form-grid">
+    <label>Username
+      <input type="text" name="username" required />
+    </label>
+    <label>Email
+      <input type="email" name="email" required />
+    </label>
+    <label>Password
+      <input type="password" name="password" minlength="8" required />
+    </label>
+    <label>
+      <input type="checkbox" name="is_admin" />
+      Grant admin access
+    </label>
+
+    <div class="cta-row">
+      <button class="btn primary" type="submit">Create Login ID</button>
+      <a class="btn ghost" href="{{ url_for('admin_users') }}">View Users</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

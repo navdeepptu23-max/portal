@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Admin Login | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Admin Login</h2>
+  <p>Default credentials can be configured with ADMIN_USERNAME and ADMIN_PASSWORD.</p>
+  <form method="post" class="form-grid">
+    <label>Username
+      <input type="text" name="username" required />
+    </label>
+    <label>Password
+      <input type="password" name="password" required />
+    </label>
+    <button class="btn primary" type="submit">Login as Admin</button>
+  </form>
+</section>
+{% endblock %}

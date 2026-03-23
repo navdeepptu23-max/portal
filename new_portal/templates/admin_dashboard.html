@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Admin Dashboard</h2>
+  <p>Welcome {{ admin.username }}. Track users and all submitted reports.</p>
+  <div class="cta-row">
+    <a class="btn primary" href="{{ url_for('admin_reports_export') }}">Export CSV</a>
+    <a class="btn ghost" href="{{ url_for('admin_user_create') }}">Create Login ID</a>
+    <a class="btn ghost" href="{{ url_for('admin_users') }}">Manage Users</a>
+    <a class="btn ghost" href="{{ url_for('admin_logout') }}">Admin Logout</a>
+  </div>
+
+  <div class="stats">
+    <article>
+      <h3>Total Users</h3>
+      <p>{{ stats.total_users }}</p>
+    </article>
+    <article>
+      <h3>Total Reports</h3>
+      <p>{{ stats.total_reports }}</p>
+    </article>
+    <article>
+      <h3>Total Outpatients</h3>
+      <p>{{ stats.total_outpatients }}</p>
+    </article>
+  </div>
+
+  <h3 class="section-title">Recent Reports</h3>
+  {% if reports %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Hospital</th>
+          <th>Owner</th>
+          <th>Month</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports[:10] %}
+          <tr>
+            <td>{{ report.hospital_name }}</td>
+            <td>{{ report.owner.username }}</td>
+            <td>{{ report.month_year }}</td>
+            <td>
+              <a href="{{ url_for('admin_report_view', report_id=report.id) }}">Open</a>
+              <span class="action-sep">|</span>
+              <a href="{{ url_for('admin_report_edit', report_id=report.id) }}">Edit</a>
+              <span class="action-sep">|</span>
+              <form class="inline-form" method="post" action="{{ url_for('admin_report_delete', report_id=report.id) }}" onsubmit="return confirm('Delete this report?');">
+                <button class="link-btn danger" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No reports submitted yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

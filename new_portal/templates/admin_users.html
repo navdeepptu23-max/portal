@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Manage Users</h2>
+  <div class="cta-row">
+    <a class="btn primary" href="{{ url_for('admin_user_create') }}">Create Login ID</a>
+    <a class="btn ghost" href="{{ url_for('admin_users_import') }}">Import CSV</a>
+    <a class="btn ghost" href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+  </div>
+
+  {% if users %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+          <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td>{% if u.is_admin %}Admin{% else %}User{% endif %}</td>
+            <td>
+              {% if u.is_active %}
+                <span class="badge success">Active</span>
+              {% else %}
+                <span class="badge danger">Inactive</span>
+              {% endif %}
+            </td>
+            <td>{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+            <td>
+              <a href="{{ url_for('admin_user_reset_password', user_id=u.id) }}">Reset Password</a>
+              <span class="action-sep">|</span>
+              <form class="inline-form" method="post" action="{{ url_for('admin_user_toggle_active', user_id=u.id) }}">
+                {% if u.is_active %}
+                  <button class="link-btn" type="submit">Deactivate</button>
+                {% else %}
+                  <button class="link-btn" type="submit">Activate</button>
+                {% endif %}
+              </form>
+              <span class="action-sep">|</span>
+              <form class="inline-form" method="post" action="{{ url_for('admin_user_delete', user_id=u.id) }}" onsubmit="return confirm('Delete this user account?');">
+                <button class="link-btn danger" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No users found.</p>
+  {% endif %}
+</section>
+{% endblock %}

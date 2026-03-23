@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Welcome, {{ user.username }}</h2>
+  <p>Your account is active. Submit and review your monthly hospital reports here.</p>
+  <div class="cta-row">
+    <a class="btn primary" href="{{ url_for('new_hospital_report') }}">Submit New Report</a>
+    <a class="btn ghost" href="{{ url_for('hospital_reports') }}">View My Reports</a>
+  </div>
+  <div class="stats">
+    <article>
+      <h3>Profile</h3>
+      <p>{{ user.email }}</p>
+    </article>
+    <article>
+      <h3>Total Reports</h3>
+      <p>{{ reports|length }}</p>
+    </article>
+  </div>
+
+  {% if reports %}
+    <h3 class="section-title">Latest Reports</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Hospital</th>
+          <th>District</th>
+          <th>Month</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports[:5] %}
+          <tr>
+            <td>{{ report.hospital_name }}</td>
+            <td>{{ report.district }}</td>
+            <td>{{ report.month_year }}</td>
+            <td><a href="{{ url_for('hospital_report_view', report_id=report.id) }}">Open</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</section>
+{% endblock %}

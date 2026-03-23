@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}New Hospital Report | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Submit Hospital Report</h2>
+  <form method="post" class="form-grid">
+    <label>Hospital Name
+      <input type="text" name="hospital_name" required />
+    </label>
+    <label>District
+      <input type="text" name="district" required />
+    </label>
+    <label>Month / Year
+      <input type="text" name="month_year" placeholder="Mar 2026" required />
+    </label>
+
+    <div class="stats">
+      <label>Outpatients
+        <input type="number" min="0" name="outpatients" value="0" />
+      </label>
+      <label>Admissions
+        <input type="number" min="0" name="admissions" value="0" />
+      </label>
+      <label>Deliveries
+        <input type="number" min="0" name="deliveries" value="0" />
+      </label>
+      <label>Deaths
+        <input type="number" min="0" name="deaths" value="0" />
+      </label>
+    </div>
+
+    <label>Notes
+      <textarea name="notes" rows="4" placeholder="Optional notes"></textarea>
+    </label>
+
+    <button class="btn primary" type="submit">Submit Report</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}My Hospital Reports | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>My Hospital Reports</h2>
+  <div class="cta-row">
+    <a class="btn primary" href="{{ url_for('new_hospital_report') }}">Add New Report</a>
+  </div>
+
+  {% if reports %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Hospital</th>
+          <th>District</th>
+          <th>Month</th>
+          <th>Outpatients</th>
+          <th>Admissions</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports %}
+          <tr>
+            <td>{{ report.hospital_name }}</td>
+            <td>{{ report.district }}</td>
+            <td>{{ report.month_year }}</td>
+            <td>{{ report.outpatients }}</td>
+            <td>{{ report.admissions }}</td>
+            <td><a href="{{ url_for('hospital_report_view', report_id=report.id) }}">Open</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No reports yet. Create your first one.</p>
+  {% endif %}
+</section>
+{% endblock %}

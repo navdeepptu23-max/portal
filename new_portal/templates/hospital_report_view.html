@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Report Detail | Nova Portal{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>{{ report.hospital_name }} - {{ report.month_year }}</h2>
+  <p><strong>District:</strong> {{ report.district }}</p>
+
+  <div class="stats">
+    <article>
+      <h3>Outpatients</h3>
+      <p>{{ report.outpatients }}</p>
+    </article>
+    <article>
+      <h3>Admissions</h3>
+      <p>{{ report.admissions }}</p>
+    </article>
+    <article>
+      <h3>Deliveries</h3>
+      <p>{{ report.deliveries }}</p>
+    </article>
+    <article>
+      <h3>Deaths</h3>
+      <p>{{ report.deaths }}</p>
+    </article>
+  </div>
+
+  {% if report.notes %}
+    <h3 class="section-title">Notes</h3>
+    <p>{{ report.notes }}</p>
+  {% endif %}
+</section>
+{% endblock %}

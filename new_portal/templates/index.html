@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Home | Nova Portal{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Build, share, and manage your workflow in one portal.</h1>
+  <p>Clean auth, simple dashboard, and ready-to-extend architecture.</p>
+  <div class="cta-row">
+    {% if user %}
+      <a class="btn primary" href="{{ url_for('dashboard') }}">Open Dashboard</a>
+    {% else %}
+      <a class="btn primary" href="{{ url_for('register') }}">Create Account</a>
+      <a class="btn ghost" href="{{ url_for('login') }}">I already have an account</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
